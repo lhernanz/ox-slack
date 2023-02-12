@@ -61,11 +61,11 @@
     (timestamp . org-slack-timestamp)))
 
 ;; timestamp
-(defun org-slack-timestamp (timestamp contents info)
+(defun org-slack-timestamp (timestamp contents _info)
   "Transcode TIMESTAMP element into Slack format.
 CONTENTS is the timestamp contents. INFO is a plist used as a
 ocmmunications channel."
-  (org-html-plain-text (org-timestamp-translate timestamp) info))
+  (org-timestamp-translate timestamp))
 
 ;; headline
 (defun org-slack-headline (headline contents info)
@@ -89,7 +89,7 @@ a communication channel."
                    (and char (format "[#%c] " char)))))
            ;; Headline text without tags.
            (heading (concat todo priority title)))
-      (format "*%s*\n\n%s" title contents)
+      (format "%s\n\n%s" title contents)
       )))
 
 ;; link
