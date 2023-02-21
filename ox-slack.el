@@ -5,7 +5,9 @@
 
 ;; Author: Matt Price
 ;; Keywords: org, slack, outlines
-;; Package-Version: 0.1.1
+;; Package-Commit: c55b003f4ac343d6c6d8ef7cbe01d0d100abac34
+;; Package-Version: 20200108.1546
+;; Package-X-Original-Version: 0.1.2
 ;; Package-Requires: ((emacs "24") (org "9.1.4") (ox-gfm "1.0"))
 ;; URL: https://github.com/titaniumbones/ox-slack
 
@@ -54,7 +56,39 @@
     (plain-text . org-slack-plain-text)
     (src-block . org-slack-src-block)
     (strike-through . org-slack-strike-through)
-    (timestamp . org-slack-timestamp)))
+    (timestamp . org-slack-timestamp)
+    (plain-list . org-slack-plain-list)))
+
+;; Plain List
+(defun org-slack-plain-list-item (line)
+  "transofrm line item to slack line item"
+  (replace-regexp-in-string "^- " ":small_blue_diamond: "
+    (replace-regexp-in-string "^- \\(\\[.\\]\\)"  "- `\\1`"
+      (replace-regexp-in-string "^[-+] \s*" "- "
+        line))))
+
+(defun org-slack-plain-list (_plain-list contents _info)
+  "Transcode PLAIN-LIST element into Markdown format.
+CONTENTS is the plain-list contents.  INFO is a plist used as
+a communication channel."
+  (string-join
+    (mapcar #'org-slack-plain-list-item
+      (split-string contents "\n"))
+    "\n"))
+
+;; (plain-list
+;;   (:type unordered :begin 445 :end 487 :contents-begin 445 :contents-end 487 ...)
+;;   (item
+;;     (:bullet "- " :begin 445 :end 459 :contents-begin 451 :contents-end 459 ...)
+;;     (paragraph
+;;       (:begin 451 :end 459 :contents-begin 451 :contents-end 459 :post-blank 1 ...)
+;;       #("check 1" 0 8 (:parent #2))))  ;; (substring-no-properties obj) -> string
+;;   (item (:bullet "- " :begin 459 :end 473 :contents-begin 465 :contents-end 473 ...)
+;;     (paragraph (:begin 465 :end 473 :contents-begin 465 :contents-end 473 :post-blank 1 ...)
+;;       #("check 2" 0 8 (:parent #2))))
+;;   (item (:bullet "- " :begin 473 :end 487 :contents-begin 479 :contents-end 487 ...)
+;;     (paragraph (:begin 479 :end 487 :contents-begin 479 :contents-end 487 :post-blank 1 ...)
+;;       #("check 3" 0 8 (:parent #2)))))
 
 ;; timestamp
 (defun org-slack-timestamp (timestamp contents _info)
