@@ -1,11 +1,10 @@
 ;;; ox-slack.el --- Slack Exporter for org-mode -*- lexical-binding: t; -*-
 
-
 ;; Copyright (C) 2018 Matt Price
 
 ;; Author: Matt Price
 ;; Keywords: org, slack, outlines
-;; Package-Version: 0.1.1
+;; Package-Version: 20200108.1546
 ;; Package-Requires: ((emacs "24") (org "9.1.4") (ox-gfm "1.0"))
 ;; URL: https://github.com/titaniumbones/ox-slack
 
@@ -55,7 +54,24 @@
     (src-block . org-slack-src-block)
     (strike-through . org-slack-strike-through)
     (table . org-slack-table)
-    (timestamp . org-slack-timestamp)))
+    (plain-list . org-slack-plain-list)))
+
+;; Plain List
+(defun org-slack-plain-list-item (line)
+  "transofrm line item to slack line item"
+  (replace-regexp-in-string "^- " ":small_blue_diamond: "
+                            (replace-regexp-in-string "^- \\(\\[.\\]\\)"  "- `\\1`"
+                                                      (replace-regexp-in-string "^[-+] \s*" "- "
+                                                                                line))))
+
+(defun org-slack-plain-list (_plain-list contents _info)
+  "Transcode PLAIN-LIST element into Markdown format.
+CONTENTS is the plain-list contents.  INFO is a plist used as
+a communication channel."
+  (string-join
+   (mapcar #'org-slack-plain-list-item
+           (split-string contents "\n"))
+   "\n"))
 
 ;; timestamp
 (defun org-slack-timestamp (timestamp contents _info)
