@@ -85,7 +85,7 @@ a communication channel."
                    (and char (format "[#%c] " char)))))
            ;; Headline text without tags.
            (heading (concat todo priority title)))
-      (format "%s\n\n%s" title contents)
+      (format "*%s*\n\n%s" title contents)
       )))
 
 ;; link
