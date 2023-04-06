@@ -57,6 +57,7 @@
     (plain-text . org-slack-plain-text)
     (src-block . org-slack-src-block)
     (strike-through . org-slack-strike-through)
+    (table . org-slack-table)
     (timestamp . org-slack-timestamp)))
 
 ;; timestamp
@@ -225,6 +226,16 @@ a communication channel."
          (prefix (concat "```"  "\n"))
          (suffix "```"))
     (concat prefix code suffix)))
+
+;;;; Table
+(defun org-slack-table (table contents info)
+  "Transcode a table element into monospaced Github Flavored Markdown format.
+  CONTENTS is nil. INFO is a plist used as a communication
+  channel."
+  (let* ((prefix (concat "```"  "\n"))
+         (text-table (org-gfm-table table contents info))
+         (suffix "```\n"))
+    (concat prefix text-table suffix)))
 
 ;;;; Quote Block
 (defun org-slack-quote-block (_quote-block contents info)
